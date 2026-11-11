@@ -1,0 +1,6 @@
+{% extends "base.html" %}{% block contenido %}
+<h1>Bitácora</h1><p class="sub">Registro de auditoría de accesos y cambios (últimos 200 eventos).</p>
+<form class="en-linea tarjeta" method="get"><label for="accion" style="margin:0">Acción</label><select id="accion" name="accion"><option value="">Todas</option>
+{% for a in acciones %}<option value="{{ a }}" {{ 'selected' if a == accion }}>{{ a }}</option>{% endfor %}</select><button class="chico" type="submit">Filtrar</button></form>
+<div class="tarjeta"><table><thead><tr><th>Fecha</th><th>Usuario</th><th>Acción</th><th>Detalle</th></tr></thead><tbody>
+{% for e in eventos %}<tr><td>{{ e.fecha_hora|fecha }}</td><td>{{ e.correo or '—' }}</td><td class="mono">{{ e.accion }}</td><td>{{ e.detalle or '' }}</td></tr>{% endfor %}</tbody></table></div>{% endblock %}

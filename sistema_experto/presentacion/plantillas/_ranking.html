@@ -1,0 +1,15 @@
+{% macro ranking(top, hay_respuestas) %}
+<table><thead><tr><th>#</th><th>Hipótesis</th><th class="num" title="Premisas que coinciden con sus respuestas">Coincide</th><th class="num" title="Premisas que sus respuestas contradicen">Contradice</th><th style="width:150px">Peso</th></tr></thead><tbody>
+{% for e in top %}
+<tr class="{{ 'tenue' if e.contador == 0 }}"><td>{{ loop.index }}</td>
+<td><strong>{{ e.granulo.nombre }}</strong> <span class="insignia {{ e.granulo.prioridad }}">{{ e.granulo.prioridad }}</span><br>
+<small class="mono">{{ e.granulo.id_regla }}</small>
+<details><summary>Ver evidencia ({{ e.contador }} de {{ e.evidencia|length }} premisas)</summary>
+<ul class="evid">{% for p, est in e.evidencia %}<li class="c-{{ est }}">{{ p.orden }}. {{ p.atributo }} = {{ p.valor }} —
+{{ {'coincide':'coincide ✓','contradice':'contradice ✗','pendiente':'pendiente','desconocida':'«No sé»'}[est] }}</li>{% endfor %}</ul></details></td>
+<td class="num">{{ e.contador }}</td><td class="num">{{ e.contradicciones }}</td>
+<td>{{ e.peso|pct }}<div class="barra-peso"><i style="width:{{ [e.peso,100]|min|round(1) }}%"></i></div></td></tr>
+{% endfor %}</tbody></table>
+{% if top and hay_respuestas %}<div class="lider"><strong>Acción inicial sugerida para {{ top[0].granulo.nombre }}</strong>
+ <span class="insignia {{ top[0].granulo.prioridad }}">{{ top[0].granulo.prioridad }}</span><br>{{ top[0].granulo.accion }}</div>{% endif %}
+{% endmacro %}

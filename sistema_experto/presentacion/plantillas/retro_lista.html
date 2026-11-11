@@ -1,0 +1,9 @@
+{% extends "base.html" %}{% block contenido %}
+<h1>Retroalimentación de los analistas</h1><p class="sub">Confirmaciones y correcciones de los resultados, para mejorar la base de conocimiento.</p>
+<p class="acciones"><a class="boton {{ '' if solo_pendientes else 'sec' }}" href="{{ url_for('conocimiento.retroalimentacion') }}">Pendientes</a>
+<a class="boton {{ 'sec' if solo_pendientes else '' }}" href="{{ url_for('conocimiento.retroalimentacion', todas=1) }}">Todas</a></p>
+<div class="tarjeta">{% if filas %}<table><thead><tr><th>Consulta</th><th>Concluyó el sistema</th><th>Resultado</th><th>Corregida a</th><th>Comentario</th><th></th></tr></thead><tbody>
+{% for f in filas %}<tr><td><a href="{{ url_for('conocimiento.ver_cita', id_cita=f.cita) }}">#{{ f.cita }}</a></td><td>{{ f.concluida }}</td><td><span class="estado {{ f.resultado }}">{{ ESTADO[f.resultado] }}</span></td>
+<td>{{ f.corregida_a if f.corregida_a != '-' else '—' }}</td><td>{{ f.comentario or '' }}</td><td>
+{% if not f.revisada %}<form method="post" action="{{ url_for('conocimiento.revisar', id_retro=f.id) }}"><input type="hidden" name="csrf" value="{{ csrf_token() }}"><button class="chico" type="submit">Marcar revisada</button></form>{% else %}Revisada{% endif %}</td></tr>{% endfor %}</tbody></table>
+{% else %}<p class="vacio">No hay retroalimentación {{ 'pendiente' if solo_pendientes }}.</p>{% endif %}</div>{% endblock %}

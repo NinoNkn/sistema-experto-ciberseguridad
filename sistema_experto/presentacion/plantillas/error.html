@@ -1,0 +1,3 @@
+{% extends "base.html" %}{% block contenido %}
+<div class="tarjeta"><h1>Error {{ codigo }}</h1><p>{{ mensaje }}</p>
+<p><a class="boton sec" href="{{ url_for('acceso.inicio') }}">Volver al inicio</a></p></div>{% endblock %}

@@ -1,0 +1,60 @@
+{% extends "base.html" %}{% from "_ranking.html" import ranking %}
+{% block titulo %}Consulta {{ v.cita.id_cita }}{% endblock %}
+{% block contenido %}
+{% set c = v.cita %}{% set est = v.estado %}
+<p><a href="{{ url_for('conocimiento.retroalimentacion') if solo_lectura else url_for('cita.lista') }}">← {{ 'Retroalimentación' if solo_lectura else 'Mis consultas' }}</a></p>
+<h1>Consulta n.º {{ c.id_cita }} <span class="estado {{ c.estado }}">{{ ESTADO[c.estado] }}</span></h1>
+<p class="sub">{{ c.descripcion_caso }} · iniciada {{ c.fecha_inicio|fecha }}{% if c.fecha_fin %} · cerrada {{ c.fecha_fin|fecha }}{% endif %}</p>
+<div class="dos">
+ <div>
+  {% if c.estado == 'en_curso' and not solo_lectura %}
+  <div class="tarjeta">
+   {% if v.nodo %}
+    <h2>Pregunta {{ est.respondidas + v.omitidas|length + 1 }}</h2>
+    <p class="pregunta">{{ v.nodo.pregunta }}</p>
+    {% if v.opciones|selectattr('fuente_tipica','equalto','consulta_bd')|list %}<p class="pista">Este dato suele obtenerse de las fuentes de seguridad (IDS, SIEM, logs): confírmelo allí antes de responder.</p>{% endif %}
+    <div class="respuestas">
+     {% for o in v.opciones %}<form method="post" action="{{ url_for('cita.responder', id_cita=c.id_cita) }}"><input type="hidden" name="csrf" value="{{ csrf_token() }}">
+       <input type="hidden" name="id_nodo" value="{{ v.nodo.id_nodo }}"><input type="hidden" name="id_hecho" value="{{ o.id_hecho }}"><button type="submit">{{ etiqueta(o.valor) }}</button></form>{% endfor %}
+     <form method="post" action="{{ url_for('cita.responder', id_cita=c.id_cita) }}"><input type="hidden" name="csrf" value="{{ csrf_token() }}">
+       <input type="hidden" name="id_nodo" value="{{ v.nodo.id_nodo }}"><input type="hidden" name="accion" value="no_se"><button type="submit" class="sec">No sé</button></form>
+    </div>
+    <p class="pista">«No sé» no cambia el ranking; el sistema pasa a la siguiente pregunta pendiente.</p>
+   {% else %}
+    <h2>Sin preguntas pendientes</h2><p>Ya no quedan preguntas para las hipótesis compatibles. Cierre la consulta para guardar el resultado.</p>
+   {% endif %}
+   <form method="post" action="{{ url_for('cita.cerrar', id_cita=c.id_cita) }}" style="margin-top:14px"><input type="hidden" name="csrf" value="{{ csrf_token() }}">
+     <button type="submit" class="{{ 'sec' if v.nodo else '' }}">Cerrar consulta y guardar resultado</button></form>
+  </div>
+  {% endif %}
+
+  {% if c.estado != 'en_curso' %}
+  <div class="tarjeta"><h2>Resultado guardado</h2>
+   <p><strong>{{ c.hipotesis }}</strong> <span class="insignia {{ c.prioridad }}">{{ c.prioridad }}</span></p>
+   <p class="pista">Primera hipótesis del ranking al cerrar. Acción por prioridad: {{ c.accion_prioridad }}</p></div>
+   {% if v.retro %}
+   <div class="tarjeta"><h2>Retroalimentación</h2>
+    <p><span class="estado {{ v.retro.resultado }}">{{ ESTADO[v.retro.resultado] }}</span>{% if v.retro.resultado == 'corregida' %} → <strong>{{ v.retro.corregida_a }}</strong>{% endif %}</p>
+    {% if v.retro.comentario %}<p>{{ v.retro.comentario }}</p>{% endif %}
+    <p class="pista">{{ 'Revisada por el ingeniero del conocimiento.' if v.retro.revisada else 'Pendiente de revisión por el ingeniero del conocimiento.' }}</p></div>
+   {% elif not solo_lectura %}
+   <div class="tarjeta"><h2>Retroalimentación</h2><p class="pista">Confirme el resultado o indique la hipótesis correcta. Se guarda para que el ingeniero del conocimiento mejore las reglas.</p>
+    <form method="post" action="{{ url_for('cita.retroalimentacion', id_cita=c.id_cita) }}"><input type="hidden" name="csrf" value="{{ csrf_token() }}">
+     <label for="id_hipotesis">Hipótesis correcta</label>
+     <select id="id_hipotesis" name="id_hipotesis">{% for g in v.hipotesis %}<option value="{{ g.id_hipotesis }}" {{ 'selected' if g.id_hipotesis == c.id_hipotesis_resultado }}>{{ g.nombre }}</option>{% endfor %}</select>
+     <label for="comentario">Comentario (opcional)</label><textarea id="comentario" name="comentario" maxlength="500"></textarea>
+     <p><button type="submit">Guardar retroalimentación</button></p></form></div>
+   {% endif %}
+  {% endif %}
+
+  <div class="tarjeta"><h2>Respuestas registradas ({{ v.respuestas|length }})</h2>
+  {% if v.respuestas or v.omitidas %}<table><thead><tr><th>Atributo</th><th>Valor</th><th>Origen</th></tr></thead><tbody>
+   {% for r in v.respuestas %}<tr><td>{{ r.atributo }}</td><td>{{ r.valor }}</td><td>{{ FUENTE[r.origen] }}</td></tr>{% endfor %}
+   {% for o in v.omitidas %}<tr class="tenue"><td>{{ o.atributo }}</td><td>«No sé»</td><td>Omitida</td></tr>{% endfor %}</tbody></table>
+  {% else %}<p class="vacio">Aún no hay respuestas.</p>{% endif %}</div>
+ </div>
+ <div class="tarjeta"><h2>Hipótesis más probables (top 5)</h2>
+  <p class="pista">Ordenadas por mayor contador de coincidencias y mayor peso probabilístico. Con pocas respuestas es normal que varias hipótesis estén empatadas: el sistema no fuerza una sola respuesta.</p>
+  {{ ranking(est.top5, v.respuestas) }}
+ </div>
+</div>{% endblock %}

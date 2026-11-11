@@ -1,0 +1,15 @@
+{% extends "base.html" %}{% block contenido %}
+<h1>Usuarios</h1><p class="sub">Las cuentas las crea el administrador; no existe auto-registro. Tras 5 intentos fallidos la cuenta se desactiva.</p>
+<div class="tarjeta"><h2>Crear usuario</h2><form method="post" action="{{ url_for('admin.crear') }}"><input type="hidden" name="csrf" value="{{ csrf_token() }}">
+ <div class="grid2"><div><label for="nombre">Nombre</label><input id="nombre" type="text" name="nombre" required></div>
+ <div><label for="correo">Correo</label><input id="correo" type="email" name="correo" required></div>
+ <div><label for="clave">Clave inicial (mín. 8, letras y números)</label><input id="clave" type="password" name="clave" required autocomplete="new-password"></div>
+ <div><label for="id_rol">Rol</label><select id="id_rol" name="id_rol">{% for r in roles %}<option value="{{ r.id_rol }}">{{ r.nombre }}</option>{% endfor %}</select></div></div>
+ <p><button type="submit">Crear usuario</button></p></form></div>
+<div class="tarjeta"><h2>Cuentas</h2><table><thead><tr><th>Nombre</th><th>Correo</th><th>Rol</th><th>Estado</th><th>Acciones</th></tr></thead><tbody>
+{% for u in usuarios %}<tr><td>{{ u.nombre }}</td><td>{{ u.correo }}</td><td>
+ <form class="en-linea" method="post" action="{{ url_for('admin.rol', id_u=u.id_usuario) }}"><input type="hidden" name="csrf" value="{{ csrf_token() }}">
+ <select name="id_rol">{% for r in roles %}<option value="{{ r.id_rol }}" {{ 'selected' if r.nombre == u.rol }}>{{ r.nombre }}</option>{% endfor %}</select><button class="chico sec" type="submit">Cambiar</button></form></td>
+<td>{{ 'Activo' if u.activo else 'Bloqueado/inactivo' }}{% if u.intentos_fallidos %} ({{ u.intentos_fallidos }} intentos){% endif %}</td><td>
+ <form class="en-linea" method="post" action="{{ url_for('admin.estado', id_u=u.id_usuario) }}"><input type="hidden" name="csrf" value="{{ csrf_token() }}"><input type="hidden" name="activo" value="{{ 0 if u.activo else 1 }}"><button class="chico {{ 'peligro' if u.activo }}" type="submit">{{ 'Desactivar' if u.activo else 'Activar' }}</button></form>
+ <form class="en-linea" method="post" action="{{ url_for('admin.clave', id_u=u.id_usuario) }}"><input type="hidden" name="csrf" value="{{ csrf_token() }}"><input type="password" name="clave" placeholder="Nueva clave" required autocomplete="new-password"><button class="chico sec" type="submit">Restablecer</button></form></td></tr>{% endfor %}</tbody></table></div>{% endblock %}

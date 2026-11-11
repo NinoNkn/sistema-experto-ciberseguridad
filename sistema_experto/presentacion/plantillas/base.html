@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>{% block titulo %}Sistema Experto de Ciberseguridad{% endblock %}</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='estilo.css') }}"></head><body>
+<header class="barra">
+  <span class="marca">Sistema Experto · Incidentes de ciberseguridad</span>
+  {% if sesion %}
+  <nav>
+    {% if sesion.rol == ROL_ANALISTA %}<a href="{{ url_for('cita.lista') }}" class="{{ 'activo' if request.blueprint=='cita' }}">Consultas</a>{% endif %}
+    {% if sesion.rol == ROL_INGENIERO %}
+      <a href="{{ url_for('conocimiento.lista') }}" class="{{ 'activo' if request.endpoint in ('conocimiento.lista','conocimiento.hipotesis','conocimiento.nueva') }}">Hipótesis y reglas</a>
+      <a href="{{ url_for('conocimiento.hechos') }}" class="{{ 'activo' if request.endpoint=='conocimiento.hechos' }}">Hechos</a>
+      <a href="{{ url_for('conocimiento.retroalimentacion') }}" class="{{ 'activo' if request.endpoint in ('conocimiento.retroalimentacion','conocimiento.ver_cita') }}">Retroalimentación</a>
+    {% endif %}
+    {% if sesion.rol == ROL_ADMIN %}
+      <a href="{{ url_for('admin.usuarios') }}" class="{{ 'activo' if request.endpoint=='admin.usuarios' }}">Usuarios</a>
+      <a href="{{ url_for('admin.bitacora') }}" class="{{ 'activo' if request.endpoint=='admin.bitacora' }}">Bitácora</a>
+    {% endif %}
+  </nav>
+  <div class="sesion"><span>{{ sesion.nombre }} · {{ sesion.rol }}</span>
+    <form method="post" action="{{ url_for('acceso.logout') }}"><input type="hidden" name="csrf" value="{{ csrf_token() }}"><button type="submit">Cerrar sesión</button></form></div>
+  {% endif %}
+</header>
+<main>
+  {% with mensajes = get_flashed_messages(with_categories=true) %}{% for cat, m in mensajes %}<div class="flash {{ cat }}">{{ m }}</div>{% endfor %}{% endwith %}
+  {% block contenido %}{% endblock %}
+</main></body></html>

@@ -1,0 +1,14 @@
+{% extends "base.html" %}{% block contenido %}
+<p><a href="{{ url_for('conocimiento.lista') }}">← Hipótesis y reglas</a></p>
+<h1>Nueva hipótesis</h1><p class="sub">Crea la hipótesis, su regla y sus premisas en una sola transacción. Nota: el árbol de decisión no se modifica; la hipótesis se evalúa cuando sus hechos aparecen en las respuestas.</p>
+<div class="tarjeta"><form method="post"><input type="hidden" name="csrf" value="{{ csrf_token() }}">
+ <label for="nombre">Nombre</label><input id="nombre" type="text" name="nombre" value="{{ form.get('nombre','') }}" required>
+ <label for="descripcion">Descripción</label><textarea id="descripcion" name="descripcion">{{ form.get('descripcion','') }}</textarea>
+ <label for="id_prioridad">Prioridad</label><select id="id_prioridad" name="id_prioridad">{% for p in prioridades %}<option value="{{ p.id_prioridad }}">{{ p.nombre }}</option>{% endfor %}</select>
+ <label for="accion">Acción recomendada</label><textarea id="accion" name="accion" required>{{ form.get('accion','') }}</textarea>
+ <div class="grid2"><div><label for="prior">Probabilidad previa</label><input id="prior" type="text" name="prior" value="{{ form.get('prior','0.04') }}"></div>
+ <div><label for="fiabilidad">Fiabilidad</label><input id="fiabilidad" type="text" name="fiabilidad" value="{{ form.get('fiabilidad','0.90') }}"></div></div>
+ <h3>Premisas (en orden de pregunta; mínimo una)</h3>
+ <div class="grid2">{% for i in range(1,7) %}<div><label for="p{{ i }}">Premisa {{ i }}</label><select id="p{{ i }}" name="premisa"><option value="">—</option>
+ {% for h in hechos %}<option value="{{ h.id_hecho }}">{{ h.atributo }} = {{ h.valor }}</option>{% endfor %}</select></div>{% endfor %}</div>
+ <p><button type="submit">Crear hipótesis</button></p></form></div>{% endblock %}

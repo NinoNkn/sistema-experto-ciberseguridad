@@ -1,0 +1,50 @@
+:root{--azul:#1f3a5f;--azul2:#2c5a8a;--fondo:#f3f5f9;--borde:#d5dbe6;--texto:#1d2733;--gris:#6b7685;
+--critica:#b3261e;--alta:#d9730d;--media:#2e7d5b;--baja:#6b7685;--ok:#e7f4ec;--err:#fdeceb;--aviso:#fff6e0}
+*{box-sizing:border-box}
+body{margin:0;font-family:"Segoe UI",Roboto,Helvetica,Arial,sans-serif;background:var(--fondo);color:var(--texto);font-size:15px;line-height:1.45}
+header.barra{background:var(--azul);color:#fff;display:flex;align-items:center;gap:24px;padding:10px 28px;flex-wrap:wrap}
+header.barra .marca{font-weight:700;font-size:17px;letter-spacing:.2px}
+header.barra nav{display:flex;gap:4px;flex:1}
+header.barra nav a{color:#cfe0f5;text-decoration:none;padding:7px 12px;border-radius:6px}
+header.barra nav a:hover,header.barra nav a.activo{background:rgba(255,255,255,.14);color:#fff}
+header.barra .sesion{display:flex;align-items:center;gap:12px;font-size:13px;color:#cfe0f5}
+header.barra .sesion button{background:transparent;border:1px solid #8fb0d6;color:#fff;padding:5px 12px;border-radius:6px;cursor:pointer}
+main{max-width:1180px;margin:24px auto;padding:0 20px}
+h1{font-size:23px;margin:0 0 4px}h2{font-size:17px;margin:0 0 10px}h3{font-size:15px;margin:14px 0 6px}
+.sub{color:var(--gris);margin:0 0 18px}
+.tarjeta{background:#fff;border:1px solid var(--borde);border-radius:10px;padding:18px 20px;margin-bottom:18px}
+.dos{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,7fr);gap:18px;align-items:start}
+@media(max-width:860px){.dos{grid-template-columns:1fr}}
+table{width:100%;border-collapse:collapse;font-size:14px}
+th,td{text-align:left;padding:8px 10px;border-bottom:1px solid var(--borde);vertical-align:top}
+th{background:#eef2f8;font-weight:600;font-size:13px;color:#33415a}
+td.num,th.num{text-align:right;font-variant-numeric:tabular-nums}
+tr.tenue td{color:#9aa4b2}
+.insignia{display:inline-block;padding:2px 9px;border-radius:99px;font-size:12px;font-weight:600;color:#fff}
+.insignia.Crítica{background:var(--critica)}.insignia.Alta{background:var(--alta)}.insignia.Media{background:var(--media)}.insignia.Baja{background:var(--baja)}
+.estado{display:inline-block;padding:2px 9px;border-radius:6px;font-size:12px;font-weight:600;background:#e8edf5;color:#33415a}
+.estado.en_curso{background:#fff3cd;color:#7a5b00}.estado.confirmada{background:#d8f0e2;color:#1d6b46}.estado.corregida{background:#fde1c8;color:#8a4a05}
+.barra-peso{background:#e8edf5;border-radius:4px;height:8px;width:100%;min-width:70px}.barra-peso i{display:block;height:8px;border-radius:4px;background:var(--azul2)}
+label{display:block;font-weight:600;font-size:13px;margin:10px 0 4px}
+input[type=text],input[type=email],input[type=password],input[type=number],select,textarea{width:100%;padding:8px 10px;border:1px solid #b9c3d3;border-radius:6px;font:inherit;background:#fff}
+textarea{min-height:76px;resize:vertical}
+button,.boton{font:inherit;cursor:pointer;border:0;border-radius:7px;padding:8px 16px;background:var(--azul2);color:#fff;font-weight:600;text-decoration:none;display:inline-block}
+button.sec,.boton.sec{background:#e8edf5;color:#24344d}button.peligro{background:var(--critica)}button.chico{padding:4px 10px;font-size:13px}
+button:hover{filter:brightness(1.08)}
+.respuestas{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+.respuestas form{margin:0}.respuestas button{min-width:92px}
+.pregunta{font-size:18px;font-weight:600;margin:4px 0 2px}
+.pista{color:var(--gris);font-size:13px}
+.flash{padding:10px 14px;border-radius:8px;margin-bottom:12px;border:1px solid var(--borde)}
+.flash.ok{background:var(--ok);border-color:#b7dcc5}.flash.error{background:var(--err);border-color:#f0b9b5}.flash.aviso{background:var(--aviso);border-color:#ecd48b}
+.login{max-width:410px;margin:70px auto}
+.acciones{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.evid{font-size:13px;margin:4px 0 0}.evid li{margin:2px 0}
+.c-coincide{color:#1d6b46}.c-contradice{color:var(--critica)}.c-pendiente{color:var(--gris)}.c-desconocida{color:#8a6d1c}
+details summary{cursor:pointer;color:var(--azul2);font-size:13px}
+.lider{border-left:5px solid var(--azul2);background:#f5f9ff;padding:10px 14px;border-radius:6px;margin-top:12px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:0 14px}
+form.en-linea{display:inline-flex;gap:6px;align-items:center;margin:0}
+form.en-linea select,form.en-linea input{width:auto}
+small.mono,.mono{font-family:Consolas,Menlo,monospace;font-size:12.5px}
+.vacio{color:var(--gris);padding:10px 0}

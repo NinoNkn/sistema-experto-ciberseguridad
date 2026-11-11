@@ -1,0 +1,13 @@
+{% extends "base.html" %}{% block contenido %}
+<h1>Consultas de incidentes</h1><p class="sub">Cada consulta (cita) guía al analista con las preguntas del experto y propone las cinco hipótesis más probables.</p>
+<div class="tarjeta"><h2>Nueva consulta</h2>
+  <form method="post" action="{{ url_for('cita.nueva') }}"><input type="hidden" name="csrf" value="{{ csrf_token() }}">
+    <label for="descripcion">Descripción breve del incidente</label>
+    <textarea id="descripcion" name="descripcion" maxlength="500" required placeholder="Ej.: múltiples intentos de acceso fallidos a la VPN desde una sola IP"></textarea>
+    <p><button type="submit">Iniciar consulta</button></p></form></div>
+<div class="tarjeta"><h2>Mi historial</h2>
+{% if citas %}<table><thead><tr><th>N.º</th><th>Inicio</th><th>Estado</th><th>Hipótesis líder</th><th>Prioridad</th><th>Corregida a</th><th></th></tr></thead><tbody>
+{% for c in citas|reverse %}<tr><td>{{ c.id_cita }}</td><td>{{ c.fecha_inicio|fecha }}</td><td><span class="estado {{ c.estado }}">{{ ESTADO[c.estado] }}</span></td>
+<td>{{ c.hipotesis or '—' }}</td><td>{% if c.prioridad %}<span class="insignia {{ c.prioridad }}">{{ c.prioridad }}</span>{% else %}—{% endif %}</td><td>{{ c.hipotesis_corregida if c.hipotesis_corregida != '-' else '—' }}</td>
+<td><a href="{{ url_for('cita.ver', id_cita=c.id_cita) }}">{{ 'Continuar' if c.estado=='en_curso' else 'Ver' }}</a></td></tr>{% endfor %}</tbody></table>
+{% else %}<p class="vacio">Aún no tiene consultas.</p>{% endif %}</div>{% endblock %}

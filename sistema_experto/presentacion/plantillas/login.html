@@ -1,0 +1,10 @@
+{% extends "base.html" %}{% block titulo %}Ingresar · Sistema Experto{% endblock %}
+{% block contenido %}
+<div class="login tarjeta">
+  <h1>Ingresar</h1><p class="sub">Use la cuenta que le creó el administrador del sistema.</p>
+  <form method="post"><input type="hidden" name="csrf" value="{{ csrf_token() }}">
+    <label for="correo">Correo</label><input id="correo" type="email" name="correo" required autofocus autocomplete="username">
+    <label for="clave">Clave</label><input id="clave" type="password" name="clave" required autocomplete="current-password">
+    <p><button type="submit">Ingresar</button></p>
+  </form>
+</div>{% endblock %}

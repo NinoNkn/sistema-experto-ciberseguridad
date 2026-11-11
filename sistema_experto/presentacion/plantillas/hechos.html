@@ -1,0 +1,4 @@
+{% extends "base.html" %}{% block contenido %}
+<h1>Hechos</h1><p class="sub">Catálogo de hechos (atributo = valor) que pueden ser premisas de las reglas.</p>
+<div class="tarjeta"><table><thead><tr><th>ID</th><th>Atributo</th><th>Valor</th><th>Fuente típica</th><th class="num">Reglas que lo usan</th></tr></thead><tbody>
+{% for h in hechos %}<tr><td>{{ h.id_hecho }}</td><td>{{ h.atributo }}</td><td>{{ h.valor }}</td><td>{{ FUENTE[h.fuente_tipica] }}</td><td class="num">{{ h.reglas }}</td></tr>{% endfor %}</tbody></table></div>{% endblock %}

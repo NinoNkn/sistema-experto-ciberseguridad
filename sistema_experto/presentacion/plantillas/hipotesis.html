@@ -1,0 +1,25 @@
+{% extends "base.html" %}{% block titulo %}{{ g.nombre }}{% endblock %}{% block contenido %}
+<p><a href="{{ url_for('conocimiento.lista') }}">← Hipótesis y reglas</a></p>
+<h1>{{ g.nombre }} <span class="insignia {{ g.prioridad }}">{{ g.prioridad }}</span></h1>
+<p class="sub">Regla <span class="mono">{{ g.id_regla }}</span>{% if g.descripcion %} · {{ g.descripcion }}{% endif %}</p>
+<div class="dos">
+ <div class="tarjeta"><h2>Regla y parámetros</h2>
+  <form method="post" action="{{ url_for('conocimiento.actualizar', id_h=g.id_hipotesis) }}"><input type="hidden" name="csrf" value="{{ csrf_token() }}">
+   <label for="id_prioridad">Prioridad</label>
+   <select id="id_prioridad" name="id_prioridad">{% for p in prioridades %}<option value="{{ p.id_prioridad }}" {{ 'selected' if p.nombre == g.prioridad }}>{{ p.nombre }}</option>{% endfor %}</select>
+   <label for="accion">Acción recomendada</label><textarea id="accion" name="accion" required>{{ g.accion }}</textarea>
+   <div class="grid2"><div><label for="prior">Probabilidad previa (0–1)</label><input id="prior" type="text" name="prior" value="{{ '%.4f'|format(g.prior) }}"></div>
+   <div><label for="fiabilidad">Fiabilidad de la regla (0,5–1)</label><input id="fiabilidad" type="text" name="fiabilidad" value="{{ '%.2f'|format(g.fiabilidad) }}"></div></div>
+   <p class="pista">Los parámetros son heurísticos definidos por el experto; cada cambio sube la versión y queda en la bitácora.</p>
+   <p><button type="submit">Guardar cambios</button></p></form></div>
+ <div class="tarjeta"><h2>Premisas ({{ g.premisas|length }})</h2>
+  <table><thead><tr><th>Orden</th><th>Atributo</th><th>Valor</th><th></th></tr></thead><tbody>
+  {% for p in g.premisas %}<tr><td>{{ p.orden }}</td><td>{{ p.atributo }}</td><td>{{ p.valor }}</td><td>
+   <form method="post" action="{{ url_for('conocimiento.quitar_premisa', id_h=g.id_hipotesis) }}"><input type="hidden" name="csrf" value="{{ csrf_token() }}"><input type="hidden" name="id_hecho" value="{{ p.id_hecho }}"><button class="chico peligro" type="submit">Quitar</button></form></td></tr>{% endfor %}</tbody></table>
+  <h3>Agregar premisa</h3>
+  <form method="post" action="{{ url_for('conocimiento.agregar_premisa', id_h=g.id_hipotesis) }}"><input type="hidden" name="csrf" value="{{ csrf_token() }}">
+   <label for="id_hecho">Hecho</label>
+   <select id="id_hecho" name="id_hecho">{% for h in disponibles %}<option value="{{ h.id_hecho }}">{{ h.atributo }} = {{ h.valor }}</option>{% endfor %}</select>
+   <label for="orden">Posición (1 a {{ g.premisas|length + 1 }})</label><input id="orden" type="number" name="orden" min="1" max="{{ g.premisas|length + 1 }}" value="{{ g.premisas|length + 1 }}">
+   <p><button type="submit" class="sec">Agregar</button></p></form></div>
+</div>{% endblock %}
